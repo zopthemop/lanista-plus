@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Lanista Plus",
+  "version": "0.1.4",
+  "permissions": ["storage", "webRequest", "webRequestBlocking", "*://beta.lanista.se/*"],
+   "browser_specific_settings": {
+    "gecko": {
+   	  "id": "@lanista-plus",
+   	  "strict_min_version": "79.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+     }
+   },
+  "background": { "scripts": ["lanistaplus.js", "moddedlanguage.js", "npcstats.js", "settings.js"] },
+  "options_ui": { "page": "settings.html", "open_in_tab": false },
+  "icons": { "48": "icon.svg" },
+  "browser_action": {
+	"default_icon": "icon.svg",
+    "default_title": "Inställningar",
+    "default_popup": "settings.html"
+  }
+}

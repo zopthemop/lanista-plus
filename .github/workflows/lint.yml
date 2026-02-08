@@ -1,0 +1,20 @@
+name: "Lint"
+on:
+  push:
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "web-ext lint"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: kewisch/action-web-ext@v1.3
+        with:
+          cmd: lint
+          source: src
+          channel: listed

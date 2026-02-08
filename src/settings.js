@@ -1,0 +1,64 @@
+const SETTINGS = {
+	moddedLanguage: { default: true, enabled: undefined, label: "Förenkla matchspråk", title: "Gör matcher enklare att följa genom att förenkla språket som används" },
+	lastRoundFirst: { default: true, enabled: undefined, label: "Visa matchresultat överst", title: "Visa resultatrundan överst i matcher" },
+	reversedChallenges: { default: true, enabled: undefined, label: "Omvänd ordning i utmaningar", title: "Visar utmaningar med lägst grad överst" },
+	detailedNpcInfo: { default: true, enabled: undefined, label: "Visa detaljerad info om odjur", title: "Visar en uppskattning av skada/KP/rundor på odjur" },
+	hideNpcDescription: { default: true, enabled: undefined, label: "Dölj beskrivning av odjur", title: "Döljer \"originalbeskrivningen\" av odjur" },
+};
+
+// Initial setup of state from browser.storage
+(async () => {
+	document.addEventListener("DOMContentLoaded", async () => {
+		let savedState = await browser.storage.local.get(
+			Object.fromEntries(Object.keys(SETTINGS).map(k => [k, SETTINGS[k].default]))
+		);
+		console.log(savedState);
+		for (const key in SETTINGS) {
+			SETTINGS[key].enabled = savedState[key] ?? SETTINGS[key].default;
+		}
+
+		const root = document.getElementById("root");
+		if (!root) {
+			// Bail out in the background script
+			return;
+		}
+
+		for (const key in SETTINGS) {
+			const setting = SETTINGS[key];
+			const row = document.createElement("div");
+			row.title = setting.title;
+			const label = document.createElement("label");
+			const cb = document.createElement("input");
+			cb.type = "checkbox";
+			cb.id = key;
+			cb.checked = setting.enabled;
+			cb.addEventListener("change", () => {
+				return browser.storage.local.set({ [key]: !!cb.checked });
+			});
+			label.append(cb, " ", setting.label);
+			row.appendChild(label);
+			root.appendChild(row);
+		}
+	});
+})();
+
+// Update state when browser.storage changes
+browser.storage.onChanged.addListener((changes, area) => {
+	if (area !== "local") return;
+	for (const [key, { newValue }] of Object.entries(changes)) {
+		console.log("listener");
+		console.log(key, newValue);
+		SETTINGS[key].enabled = !!newValue;
+		//const el = document.getElementById(key);
+		//if (el) el.checked = Boolean(newValue ?? DEFAULTS[key]);
+	}
+});
+
+// Populate settings from storage
+//async function getAll() {
+//	return browser.storage.local.get(
+//		Object.fromEntries(Object.keys(SETTINGS).map(k => [k, SETTINGS[k].default]))
+//	);
+//}
+
+// TODO: Does the background script have a document? Can we include this as a background thing too?
