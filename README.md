@@ -8,6 +8,7 @@ I dagsläget finns följande inställningar:
 - Lägst grad först i utmaningar
 - Visa detaljerad info om odjur
 - Dölj beskrivning av odjur
+- Sortera genvägar äldst först
 
 Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höger i Firefox, sen på Lanista Plus. Allt går slå på/av individuellt (som standard är allting påslaget).
 
