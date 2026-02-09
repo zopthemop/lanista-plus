@@ -138,9 +138,20 @@ interceptRequest(async (buf, details) => {
 			if (SETTINGS.hideNpcDescription.enabled) {
 				// NOTE: When we hide the description, the column becomes 50%
 				// on mobile which breaks the layout. So, we force it to be
-				// full width with a dirty descriptor that hopefully only
-				// matches our intended element
-				result.description = '<style>div.text-sm.mt-2:has(p.italic.mt-2) { flex-basis: 100%; }</style>';
+				// more like desktop layouting with some very dirty descriptors
+				// that hopefully only match our intended elements
+				result.description = `<style>
+					@media (max-width: 767px) {
+						/* Force button container to be full width on sm resolutions */
+						div:has(> p.text-base.font-semibold.mt-4.mb-2) {
+							width: calc(100vw - 35px);
+						}
+
+						/* Force the columns to behave like on md resolutions */
+						div.text-sm.mt-2:has(> p.italic.mt-2) { width: 50%; }
+						div.order-first.flex.flex-col.items-center.mt-2:has(> img.h-auto) { width: 50%; order: 9999 !important }
+					}
+				</style>`;
 			}
 
 			if (SETTINGS.detailedNpcInfo.enabled) {
