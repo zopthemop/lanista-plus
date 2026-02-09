@@ -41,7 +41,11 @@ interceptRequest(async buf => {
  * - Fixes issues with bola-like effects
  */
 interceptRequest(async buf => {
-	const battle = buf.length && JSON.parse(buf);
+	if (!buf.length) {
+		return buf;
+	}
+
+	const battle = JSON.parse(buf);
 	// NOTE: A few different routes seem to get caught up here, so we check
 	// if rounds is defined
 	if (battle?.rounds) {
@@ -132,7 +136,11 @@ interceptRequest(async (buf, details) => {
 		const result = JSON.parse(buf);
 		if (npcId in npcStats) {
 			if (SETTINGS.hideNpcDescription.enabled) {
-				result.description = '';
+				// NOTE: When we hide the description, the column becomes 50%
+				// on mobile which breaks the layout. So, we force it to be
+				// full width with a dirty descriptor that hopefully only
+				// matches our intended element
+				result.description = '<style>div.text-sm.mt-2:has(p.italic.mt-2) { flex-basis: 100%; }</style>';
 			}
 
 			if (SETTINGS.detailedNpcInfo.enabled) {
