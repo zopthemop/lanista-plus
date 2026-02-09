@@ -190,6 +190,24 @@ interceptRequest(async (buf, details) => {
 	return buf;
 }, 'api/users/me');
 
+/**
+ * # users/me/favoritelinks API call (happens when they change)
+ * - Fix order of favorite_links
+ */
+interceptRequest(async (buf, details) => {
+	try {
+		const result = JSON.parse(buf);
+		if (SETTINGS.sortFavoriteLinks.enabled) {
+			result.sort((a,b) => a.id - b.id);
+		}
+		buf = JSON.stringify(result);
+	} catch (e) {
+		console.error("Error in users/me/favoritelinks API call!", e);
+	}
+
+	return buf;
+}, 'api/users/me/favoritelinks');
+
 
 /* * * * * * * * *
  *               *
