@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Lanista Plus",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "permissions": ["storage", "webRequest", "webRequestBlocking", "*://beta.lanista.se/*"],
    "browser_specific_settings": {
     "gecko": {

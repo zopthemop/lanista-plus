@@ -150,6 +150,12 @@ interceptRequest(async (buf, details) => {
 						/* Force the columns to behave like on md resolutions */
 						div.text-sm.mt-2:has(> p.italic.mt-2) { width: 50%; }
 						div.order-first.flex.flex-col.items-center.mt-2:has(> img.h-auto) { width: 50%; order: 9999 !important }
+
+						/* The fight button must be relatively positioned or
+						 * the right half can't be clicked on sm resolutions */
+						div.text-sm.mt-2:has(> p.italic.mt-2) > div > div.w-full > button.btn-action.mt-4.w-full {
+							position: relative;
+						}
 					}
 				</style>`;
 			}
