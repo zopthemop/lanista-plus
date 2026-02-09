@@ -1,78 +1,79 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <style>
-      /* Let the browser render native controls correctly in light/dark */
-      :root { color-scheme: light dark; }
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			/* Let the browser render native controls correctly in light/dark */
+			:root { color-scheme: light dark; }
 
-      /* Design tokens */
-      :root {
-        --bg: #ffffff;
-        --fg: #111111;
-        --muted: #555;
-        --border: #e3e3e3;
-        --accent: #2563eb;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #1b1b1b;
-          --fg: #f2f2f2;
-          --muted: #a0a0a0;
-          --border: #2a2a2a;
-          --accent: #60a5fa;
-        }
-      }
+			/* Design tokens */
+			:root {
+				--bg: #ffffff;
+				--fg: #111111;
+				--muted: #555;
+				--border: #e3e3e3;
+				--accent: #2563eb;
+			}
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--bg: #1b1b1b;
+					--fg: #f2f2f2;
+					--muted: #a0a0a0;
+					--border: #2a2a2a;
+					--accent: #60a5fa;
+				}
+			}
 
-      /* Respect increased contrast */
-      @media (prefers-contrast: more) {
-        :root { --border: currentColor; }
-      }
+			/* Respect increased contrast */
+			@media (prefers-contrast: more) {
+				:root { --border: currentColor; }
+			}
 
-      html, body {
-        background: var(--bg);
-        color: var(--fg);
-        margin: 0;
-      }
-      body {
-        font: 13px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-        padding: 10px;
-        min-width: 220px;
-      }
-      .row { margin: 8px 0; }
+			html, body {
+				background: var(--bg);
+				color: var(--fg);
+				margin: 0;
+			}
+			body {
+				font: 13px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+				padding: 10px;
+				min-width: 220px;
+			}
+			.row { margin: 8px 0; }
 
-      /* Make checkboxes match theme accent and be visible in dark mode */
-      input[type="checkbox"] {
-        accent-color: var(--accent);
-      }
+			/* Make checkboxes match theme accent and be visible in dark mode */
+			input[type="checkbox"] {
+				accent-color: var(--accent);
+			}
 
-      /* Clear, accessible focus styles */
-      :focus {
-        outline: 2px solid currentColor;
-        outline-offset: 2px;
-      }
+			/* Clear, accessible focus styles */
+			:focus {
+				outline: 2px solid currentColor;
+				outline-offset: 2px;
+			}
 
-	  label {
-		  cursor: help;
-	  }
+			label {
+				cursor: help;
+			}
 
-	  input {
-		  cursor: pointer;
-	  }
+			input {
+				cursor: pointer;
+			}
 
-      .hint {
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 6px;
-        border-top: 1px solid var(--border);
-        padding-top: 6px;
-      }
-    </style>
-  </head>
-  <body>
-	<strong style="margin-bottom: 5px">Lanista Plus</strong>
+			.hint {
+				color: var(--muted);
+				font-size: 12px;
+				margin-top: 6px;
+				border-top: 1px solid var(--border);
+				padding-top: 6px;
+			}
+		</style>
+	</head>
+	<body>
+	<strong style="display:block; margin-bottom: 5px">Lanista Plus</strong>
 	<div id="root"></div>
 	<div class="hint">Hovra inställningarna för mer info</div>
-    <script src="settings.js"></script>
-  </body>
+	<script src="settings.js"></script>
+	</body>
 </html>
