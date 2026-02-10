@@ -253,7 +253,7 @@ interceptRequest(async (buf, details) => {
 				iWon() { return this.myParticipant && this.myParticipant.won; },
 				iLost() { return this.myParticipant && !this.myParticipant.won; },
 				iGotLoot() { 
-					// Matching an action to a round is kind of a pain, since
+					// Matching an action to a player is kind of a pain, since
 					// player_two is just the name and has html in it and stuff...
 					let dp = new DOMParser();
 					return this.battle.rounds.map(x => x.text).flat()
