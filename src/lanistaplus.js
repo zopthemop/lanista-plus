@@ -5,33 +5,44 @@
  * - Simplify battle language
  */
 interceptRequest(async buf => {
-	if (!SETTINGS.moddedLanguage.enabled) {
-		return buf;
+	if (SETTINGS.moddedLanguage.enabled) {
+		// Replace the battle translation texts
+		const langKeyTerm = 'sv.battle":';
+		const startIdx = buf.indexOf(langKeyTerm) + langKeyTerm.length;
+		buf = replaceObjectWith(startIdx, buf, originalLanguage => {
+			const isObj = v => v && v.constructor === Object
+			const deepMerge = (a, b) => {
+				const out = { ...a };
+				for (const [k, v] of Object.entries(b)) {
+					if (!(k in out)) {
+						out[k] = v;
+					} else if (isObj(out[k]) && isObj(v)) {
+						out[k] = deepMerge(out[k], v);
+					}
+				}
+
+				return out;
+			}
+			
+			// NOTE: moddedLanguage is "imported" from moddedlanguage.js in manifest.json
+			return JSON.stringify(deepMerge(moddedLanguage, originalLanguage));
+		});
 	}
 
-	// Replace the battle translation texts
-	const langKeyTerm = 'sv.battle":';
-	const startIdx = buf.indexOf(langKeyTerm) + langKeyTerm.length;
-	const modded = replaceObjectWith(startIdx, buf, originalLanguage => {
-		const isObj = v => v && v.constructor === Object
-		const deepMerge = (a, b) => {
-			const out = { ...a };
-			for (const [k, v] of Object.entries(b)) {
-				if (!(k in out)) {
-					out[k] = v;
-				} else if (isObj(out[k]) && isObj(v)) {
-					out[k] = deepMerge(out[k], v);
-				}
+	if (SETTINGS.mergeNotifications.enabled) {
+		// When we receive several tournament notifications at once, merge them into one
+		buf = buf.replace(/onTournamentsPublished\(([^\)]*)\)\{/, `
+			$&
+			if ($1.length > 1) {
+				const tour = $1[0];
+				tour.name = tour.name.replace(/\\s[IVX]+(?:\\s|$)/, '') + ' (' + $1.length + ' st)';
+				tour.id = '';
+				$1 = [tour];
 			}
+		`);
+	}
 
-			return out;
-		}
-		
-		// NOTE: moddedLanguage is "imported" from moddedlanguage.js in manifest.json
-		return JSON.stringify(deepMerge(moddedLanguage, originalLanguage));
-	});
-
-	return modded;
+	return buf;
 }, "build/assets/main*.js");
 
 
@@ -185,9 +196,22 @@ interceptRequest(async (buf, details) => {
 interceptRequest(async (buf, details) => {
 	try {
 		const result = JSON.parse(buf);
+
 		if (SETTINGS.sortFavoriteLinks.enabled) {
 			result.favorite_links.sort((a,b) => a.id - b.id);
 		}
+
+		if (SETTINGS.renameTours.enabled) {
+			result.avatar.active_tournaments.forEach(tour => {
+				// Extract Swedish hh:mm from the UTC datetime
+				const time = new Date(tour.start_at.replace(' ', 'T') + 'Z')
+					.toLocaleTimeString('sv-SE', {hour: '2-digit', minute: '2-digit', hour12 :false})
+				// Remove the roman numerals and add the time
+				tour.name = tour.name.replace(/\s[IVX]+(?:\s|$)/, '') + ' ' + time;
+			});
+		}
+
+
 		buf = JSON.stringify(result);
 	} catch (e) {
 		console.error("Error in users/me API call!", e);

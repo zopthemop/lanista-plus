@@ -9,6 +9,8 @@ I dagsläget finns följande inställningar:
 - Visa detaljerad info om odjur
 - Dölj beskrivning av odjur
 - Sortera genvägar äldst först
+- Slå ihop turneringsnotiser
+- Lägg klockslag i tournamn i vänstermenyn
 
 Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höger i Firefox, sen på Lanista Plus. Allt går slå på/av individuellt (som standard är allting påslaget).
 
@@ -33,3 +35,7 @@ Standard Lanista             |  Lanista Plus med "Förenklat matchspråk"
 Standard Lanista             |  Lanista Plus med "Visa detaljerad info om odjur" <br>samt "Dölj beskrivning av odjur"
 :-------------------------:|:-------------------------:
 ![](images/originalnpc.png)  |  ![](images/moddednpc.png)
+
+Standard Lanista             |  Lanista Plus med "Slå ihop turneringsnotiser"
+:-------------------------:|:-------------------------:
+![](images/originalnotifications.png)  |  ![](images/moddednotifications.png)

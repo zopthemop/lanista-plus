@@ -135,9 +135,9 @@ const moddedLanguage = {
 		attack_with_armor_block_text_2: ":Player_one attackerar :Player_two (som <strong>blockerar</strong> delvis) med :weapon på :body_hit_area vilket skadar :relative_injury (:damage). :armor_name absorberar :armor_block. :Block_item tar :block_item_damage i skada (:block_item_absorb absorberat).",
     },
     ranged: {
-        ranged_attack_text_1: ":Player_one attackerar :Player_two från distans med :weapon på :body_hit_area vilket skadar :relative_injury (:damage).",
-        ranged_attack_text_2: ":Player_one attackerar :Player_two från distans med :weapon på :body_hit_area vilket skadar :relative_injury (:damage).",
-        ranged_attack_text_3: ":Player_one attackerar :Player_two från distans med :weapon på :body_hit_area vilket skadar :relative_injury (:damage).",
+        ranged_attack_text_1: ":Player_one attackerar :Player_two från distans med :weapon vilket skadar :relative_injury (:damage).",
+        ranged_attack_text_2: ":Player_one attackerar :Player_two från distans med :weapon vilket skadar :relative_injury (:damage).",
+        ranged_attack_text_3: ":Player_one attackerar :Player_two från distans med :weapon vilket skadar :relative_injury (:damage).",
     },
     ranged_shield_block: {
 		ranged_shield_block_text_1: ":Player_one attackerar :Player_two (som <strong>blockerar</strong>) från distans med :weapon. :Block_item tar :damage i skada (:absorbed absorberat).",

@@ -5,6 +5,8 @@ const SETTINGS = {
 	detailedNpcInfo: { default: true, enabled: undefined, label: "Visa detaljerad info om odjur", title: "Visar en uppskattning av skada/KP/rundor på odjur" },
 	hideNpcDescription: { default: true, enabled: undefined, label: "Dölj beskrivning av odjur", title: "Döljer \"originalbeskrivningen\" av odjur" },
 	sortFavoriteLinks: { default: true, enabled: undefined, label: "Sortera genvägar äldst först", title: "Fixar sorteringen av genvägar så att de är i ordningen du la till dem" },
+	mergeNotifications: { default: true, enabled: undefined, label: "Slå ihop turneringsnotiser", title: "När 13 turneringar släpps samtidigt får man 13 notiser - med denna får man istället en" },
+	renameTours: { default: true, enabled: undefined, label: "Lägg klockslag i tournamn i vänstermenyn", title: "Ersätter t.ex. Lunchbatalj IX med Lunchbatalj 13:10 i vänstermenyn" },
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
