@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Lanista Plus",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "permissions": ["storage", "webRequest", "webRequestBlocking", "*://beta.lanista.se/*"],
    "browser_specific_settings": {
     "gecko": {
@@ -17,7 +17,7 @@
   "icons": { "48": "icon.svg" },
   "browser_action": {
 	"default_icon": "icon.svg",
-    "default_title": "Inställningar",
+    "default_title": "Lanista Plus",
     "default_popup": "settings.html"
   }
 }
