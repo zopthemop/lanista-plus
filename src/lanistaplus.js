@@ -266,6 +266,8 @@ interceptRequest(async (buf, details) => {
 		`);
 
 		// Add some eye popping "you've won/lost/got loot" alerts
+		// TODO: actually, the ._v and ._e below could change on transpiling...
+		//       figure that out if it becomes a problem
 		buf = buf.replace(/\[([^=\[]+)===0&&([^&\.]+)\.battle\.live/, `
 			[!$2.battle.live && $1 === 0 && $2.iWon ? e("div", {
 				staticClass: "rounded border bg-green-100 border-green-400 text-green-700 my-2 p-4 text-sm"
