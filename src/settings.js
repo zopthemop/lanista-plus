@@ -1,6 +1,7 @@
 const SETTINGS = {
 	moddedLanguage: { default: true, enabled: undefined, label: "Förenkla matchspråk", title: "Gör matcher enklare att följa genom att förenkla språket som används" },
 	lastRoundFirst: { default: true, enabled: undefined, label: "Visa matchresultat överst", title: "Visa resultatrundan överst i matcher" },
+	easyMatchResults: { default: true, enabled: undefined, label: "Visa extra tydligt matchresultat", title: "Visar en grön eller orange ruta längst upp i matcher du själv varit med i, som säger ifall du vann eller förlorade. Den säger även ifall du fick några föremål" },
 	reversedChallenges: { default: true, enabled: undefined, label: "Omvänd ordning i utmaningar", title: "Visar utmaningar med lägst grad överst" },
 	detailedNpcInfo: { default: true, enabled: undefined, label: "Visa detaljerad info om odjur", title: "Visar en uppskattning av skada/KP/rundor på odjur" },
 	hideNpcDescription: { default: true, enabled: undefined, label: "Dölj beskrivning av odjur", title: "Döljer \"originalbeskrivningen\" av odjur" },

@@ -109,7 +109,8 @@ interceptRequest(async buf => {
 			}
 		}
 		
-		if (SETTINGS.lastRoundFirst.enabled) {
+		// NOTE: Don't move around rounds on live fights, breaks stuff
+		if (SETTINGS.lastRoundFirst.enabled && !battle.live) {
 			// Move the last round first
 			battle.rounds.unshift(battle.rounds.pop());
 			// ... and reset the order (doesn't seem to matter, but eh)
@@ -211,10 +212,9 @@ interceptRequest(async (buf, details) => {
 			});
 		}
 
-
 		buf = JSON.stringify(result);
 	} catch (e) {
-		console.error("Error in users/me API call!", e);
+		console.error("Error in users/me API call!", e, JSON.stringify(buf));
 	}
 
 	return buf;
@@ -237,6 +237,68 @@ interceptRequest(async (buf, details) => {
 
 	return buf;
 }, 'api/users/me/favoritelinks');
+
+/**
+ * # BattleInfo.js
+ * - Implement some behavior for match results
+ */
+interceptRequest(async (buf, details) => {
+	if (SETTINGS.easyMatchResults.enabled) {
+		// add some helpers for the below behavior
+		// NOTE: file has two vue components, this will actually replace in both
+		//       components, not ideal, but... eh
+		buf = buf.replace('computed:{', `
+			computed:{
+				myParticipant() { return this.battle.participants.find(x => x.fighter.id === this.avatar.id); },
+				iWon() { return this.myParticipant && this.myParticipant.won; },
+				iLost() { return this.myParticipant && !this.myParticipant.won; },
+				iGotLoot() { 
+					// Matching an action to a player is kind of a pain, since
+					// player_two is just the name and has html in it and stuff...
+					let dp = new DOMParser();
+					return this.battle.rounds.map(x => x.text).flat()
+						.filter(x => x.key.includes('loot'))
+						.map(x => x.args.player_two)
+						.map(x => (dp.parseFromString(x, 'text/html').body.textContent || ''))
+						.filter(x => x)
+						.find(x => x === this.myParticipant?.fighter?.name);
+				},
+		`);
+
+		// Add some eye popping "you've won/lost/got loot" alerts
+		// TODO: actually, the ._v and ._e below could change on transpiling...
+		//       figure that out if it becomes a problem
+		buf = buf.replace(/\[([^=\[]+)===0&&([^&\.]+)\.battle\.live/, `
+			[!$2.battle.live && $1 === 0 && $2.iWon ? e("div", {
+				staticClass: "rounded border bg-green-100 border-green-400 text-green-700 my-2 p-4 text-sm"
+			}, [
+				$2._v("Din gladiator vann! Grattis!"),
+				$2.iGotLoot ? e("strong", { staticClass: 'block mt-4 text-lg' }, [$2._v("Du fick även loot!")]) : $2._e()
+			]) : $2._e(),
+			!$2.battle.live && $1 === 0 && $2.iLost ? e("div", {
+				staticClass: "rounded border bg-orange-100 border-orange-400 text-orange-700 my-2 p-4 text-sm"
+			}, [
+				$2._v("Din gladiator förlorade :(")
+			]) : $2._e(),
+			$1===0&&$2.battle.live
+		`);
+	}
+
+
+	if (SETTINGS.lastRoundFirst.enabled) {
+		// This bit makes the first round label "Lag x går segrande ur striden!" (except for live fights)
+		buf = buf.replace(/:([^:\+]+)\+1!==([^=\.]+)\.rounds\.length\|\|!\2\.battle\.finished&&!\2\.isLegacy/, `
+			:($2.battle.live ? ($1+1!==$2.rounds.length||!$2.battle.finished&&!$2.isLegacy) : ($1>0||!$2.battle.finished&&!$2.isLegacy))
+		`);
+
+		// This bit ensures ensures following rounds have the right label
+		buf = buf.replace(/displayIndex\(([^\(\)]+)\){return this\.battle\.live\?\1:\1\+1/, `
+			displayIndex($1) { return $1
+		`);
+	}
+
+	return buf;
+}, 'build/assets/BattleInfo-*');
 
 
 /* * * * * * * * *
