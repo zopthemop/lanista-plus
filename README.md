@@ -16,7 +16,7 @@ Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höge
 
 ### Hur installerar jag?
 
-1. Via [addons.mozilla.org här](https://addons.mozilla.org/en-US/firefox/addon/lanista-plus/) här. Funkar på Firefox på Android också.
+1. Via [addons.mozilla.org här](https://addons.mozilla.org/en-US/firefox/addon/lanista-plus/). Funkar på Firefox på Android också.
 2. Direkt via .xpi-filen som [finns under releases här](https://github.com/zopthemop/lanista-plus/releases). Det går också i Firefox på Android, men då måste man pilla ytterligare, se [här](https://stackoverflow.com/a/79312694) (notera att tillägget är signerat, så man behöver bara följa steg 1 där).
 
 ### Hörru, odjuret slog hårdare än den detaljerade infon sa!
