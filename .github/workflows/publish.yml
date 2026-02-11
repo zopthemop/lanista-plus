@@ -10,6 +10,11 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
+      - name: "Change version for AMO"
+        run: |
+          jq '.version = (.version + "m")' src/manifest.json > tmp.json
+          mv tmp.json src/manifest.json
+
       - name: "web-ext build"
         id: web-ext-build
         uses: kewisch/action-web-ext@v1.3
@@ -17,11 +22,6 @@ jobs:
           cmd: build
           source: src
           ignoreFiles: '[ ".gitignore" ]'
-
-      - name: "Change version for AMO"
-        run: |
-          jq '.version = (.version + "m")' src/manifest.json > tmp.json
-          mv tmp.json src/manifest.json
 
       - name: "web-ext sign AMO"
         id: web-ext-sign
