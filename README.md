@@ -5,12 +5,14 @@ En Firefox extension som tweakar det härliga svenska webbspelet [Lanista](https
 I dagsläget finns följande inställningar:
 - Förenklat matchspråk
 - Visa matchresultat överst
+- Visa extra tydligt matchresultat
 - Lägst grad först i utmaningar
 - Visa detaljerad info om odjur
 - Dölj beskrivning av odjur
 - Sortera genvägar äldst först
 - Slå ihop turneringsnotiser
 - Lägg klockslag i tournamn i vänstermenyn
+- Visa alla gladiatorer i stallet
 
 Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höger i Firefox, sen på Lanista Plus. Allt går slå på/av individuellt (som standard är allting påslaget).
 
