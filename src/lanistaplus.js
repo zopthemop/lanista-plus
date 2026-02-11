@@ -42,6 +42,50 @@ interceptRequest(async buf => {
 		`);
 	}
 
+	// Tournaments come over the websocket too, gotta rename them here
+	if (SETTINGS.renameTours.enabled) {
+		buf = buf.replace(/onRefreshAvatar\(([^\(\)]+)\)\{/, `
+			onRefreshAvatar($1){
+				${renameTours.toString()};
+				renameTours($1.avatar.active_tournaments);
+			`);
+	}
+
+	if (SETTINGS.showAllGladiators.enabled) {
+		// TODO: these regexps are a real pain. is there a better way?
+		// Show all gladiators in the stable, and make the current one not clickable
+		buf = buf.replace(/([^,\(]+)\(([^\(\.]+).avatars.filter\(([^\(=]+)=>\3.id!==\2.avatar.id\),function\(\3\)\{return ([^\s\(]+)\("div",\{key:\3.id,staticClass:"flex items-center justify-between w-full pb-1 mb-1 border-b border-gray-500 cursor-pointer",on:\{click:function\(r\)\{return \2.changeAvatar\(\3\)\}\}\}/, `
+			$1($2.avatars, function($3) {
+				return $4("div", {
+					key: $3.id,
+					staticClass: "flex items-center justify-between w-full pb-1 mb-1 border-b border-gray-500",
+					class: {
+						"cursor-pointer": !$3.active,
+						"font-bold": $3.active
+					},
+					on: {
+						click: function(r) {
+							if ($3.active) return;
+							return $2.changeAvatar($3)
+						}
+					}
+				}
+		`);
+
+		// For the active gladiator, replace the KP with the text "Aktiv" at 50% transparency
+		buf = buf.replace(/\[([^\[\(]+)\("span",\[([^\[\(]+)\(([^\(]+)\(([^\(\.]+).current_hp\)\+"\/"\+\3\(\4.max_hp\)\)\]\)/, `
+			[$1("span", {class: {"opacity-50": $4.active}}, [$4.active ? $2('Aktiv') : $2($3($4.current_hp)+"/"+$3($4.max_hp))])
+		`);
+
+		// For the active gladiator, make the name 50% transparent
+		buf = buf.replace(/\[([^\[\(]+)\("span",\{staticClass:"block w-16 h-4 overflow-hidden text-xs font-light font-serif overflow-ellipsis"\},\[([^\[\(]+)\(" "\+([^\+\(]+)\(([^\(\.]+).name\)\+" "\)\]\)/, `
+			[$1("span", {
+                staticClass: "block w-16 h-4 overflow-hidden text-xs font-light font-serif overflow-ellipsis",
+				class: {"opacity-50": $4.active}
+            }, [$2(" " + $3($4.name) + " ")])
+		`);
+	}
+
 	return buf;
 }, "build/assets/main*.js");
 
@@ -193,6 +237,7 @@ interceptRequest(async (buf, details) => {
 /**
  * # users/me API call
  * - Fix order of favorite_links
+ * - rename tours (remove numerals, add clock)
  */
 interceptRequest(async (buf, details) => {
 	try {
@@ -203,13 +248,7 @@ interceptRequest(async (buf, details) => {
 		}
 
 		if (SETTINGS.renameTours.enabled) {
-			result.avatar.active_tournaments.forEach(tour => {
-				// Extract Swedish hh:mm from the UTC datetime
-				const time = new Date(tour.start_at.replace(' ', 'T') + 'Z')
-					.toLocaleTimeString('sv-SE', {hour: '2-digit', minute: '2-digit', hour12 :false})
-				// Remove the roman numerals and add the time
-				tour.name = tour.name.replace(/\s[IVX]+(?:\s|$)/, '') + ' ' + time;
-			});
+			renameTours(result.avatar.active_tournaments);
 		}
 
 		buf = JSON.stringify(result);
@@ -404,4 +443,18 @@ function swedishifyList(values) {
   if (n === 0) return null;
   if (n === 1) return arr[0];
   return arr.slice(0, -1).join(', ') + ' och ' + arr[n - 1];
+}
+
+/**
+ * A little helper to rewrite e.g. Lunchbatalj IX => Lunchbatalj 13:10.
+ * Used both in the extension and injected in the client
+ */
+function renameTours(tours) {
+	tours && tours.forEach(tour => {
+		// Extract Swedish hh:mm from the UTC datetime
+		const time = new Date(tour.start_at.replace(' ', 'T') + 'Z')
+			.toLocaleTimeString('sv-SE', {hour: '2-digit', minute: '2-digit', hour12 :false})
+		// Remove the roman numerals and add the time
+		tour.name = tour.name.replace(/\s[IVX]+(?:\s|$)/, '') + ' ' + time;
+	});
 }
