@@ -18,6 +18,11 @@ jobs:
           source: src
           ignoreFiles: '[ ".gitignore" ]'
 
+      - name: "Change version for AMO"
+        run: |
+          jq '.version = (.version + "m")' src/manifest.json > tmp.json
+          mv tmp.json src/manifest.json
+
       - name: "web-ext sign AMO"
         id: web-ext-sign
         uses: kewisch/action-web-ext@v1.3
