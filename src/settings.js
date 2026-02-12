@@ -1,12 +1,12 @@
 const SETTINGS = {
 	moddedLanguage: { default: true, enabled: undefined, label: "Förenkla matchspråk", title: "Gör matcher enklare att följa genom att förenkla språket som används" },
-	lastRoundFirst: { default: true, enabled: undefined, label: "Visa matchresultat överst", title: "Visa resultatrundan överst i matcher" },
-	easyMatchResults: { default: true, enabled: undefined, label: "Visa extra tydligt matchresultat", title: "Visar en grön eller orange ruta längst upp i matcher du själv varit med i, som säger ifall du vann eller förlorade. Den säger även ifall du fick några föremål" },
+	lastRoundFirst: { default: true, enabled: undefined, label: "Visa matchresultat överst", title: "Visa resultatrundan längst upp i matcher istället för längst ner" },
+	easyMatchResults: { default: true, enabled: undefined, label: "Visa extra tydligt matchresultat", title: "Visar en grön eller orange ruta längst upp i matcher du själv varit med i som säger ifall du vann eller förlorade (och ifall du fick några föremål)" },
 	reversedChallenges: { default: true, enabled: undefined, label: "Omvänd ordning i utmaningar", title: "Visar utmaningar med lägst grad överst" },
-	detailedNpcInfo: { default: true, enabled: undefined, label: "Visa detaljerad info om odjur", title: "Visar en uppskattning av skada/KP/rundor på odjur" },
+	detailedNpcInfo: { default: true, enabled: undefined, label: "Visa detaljerad info om odjur", title: "Visar en uppskattning av skada/KP/säckning på odjur" },
 	hideNpcDescription: { default: true, enabled: undefined, label: "Dölj beskrivning av odjur", title: "Döljer \"originalbeskrivningen\" av odjur" },
 	sortFavoriteLinks: { default: true, enabled: undefined, label: "Sortera genvägar äldst först", title: "Fixar sorteringen av genvägar så att de är i ordningen du la till dem" },
-	mergeNotifications: { default: true, enabled: undefined, label: "Slå ihop turneringsnotiser", title: "När 13 turneringar släpps samtidigt får man 13 notiser - med denna får man istället en" },
+	mergeNotifications: { default: true, enabled: undefined, label: "Slå ihop turneringsnotiser", title: "När 13 turneringar släpps samtidigt får en notis istället för 13" },
 	renameTours: { default: true, enabled: undefined, label: "Lägg klockslag i tournamn i vänstermenyn", title: "Ersätter t.ex. Lunchbatalj IX med Lunchbatalj 13:10 i vänstermenyn" },
 	showAllGladiators: { default: true, enabled: undefined, label: "Visa alla gladiatorer i stallet", title: "Visar alla dina gladiatorer i stallet (i högermenyn) och markerar den som är aktiv, så att det är tydligare vilka du har och vilken du är inne på" },
 	warnOutleveledBeasts: { default: true, enabled: undefined, label: "Tydligare varning när man gradat ifrån odjur", title: "När man är för hög grad för att få sm eller EP från ett odjur, visa en tydligare varning" },
@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const setting = SETTINGS[key];
 		const row = document.createElement("div");
 		row.title = setting.title;
+		const description = document.createElement("p");
+		description.className = 'description mobile-only';
+		description.innerHTML = setting.title;
 		const label = document.createElement("label");
 		const cb = document.createElement("input");
 		cb.type = "checkbox";
@@ -42,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		});
 		label.append(cb, " ", setting.label);
 		row.appendChild(label);
+		row.appendChild(description);
 		root.appendChild(row);
 	}
 });

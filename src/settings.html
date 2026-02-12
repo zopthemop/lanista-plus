@@ -68,12 +68,32 @@
 				border-top: 1px solid var(--border);
 				padding-top: 6px;
 			}
+
+			.description {
+				color: var(--muted);
+				font-size: 12px;
+				margin-bottom: 5px;
+				margin-top: -5px;
+				padding: 5px;
+				padding-left: 25px;
+			}
+
+			@media (hover: none) {
+				.desktop-only {
+					display: none;
+				}
+			}
+			@media (hover: hover) {
+				.mobile-only {
+					display: none;
+				}
+			}
 		</style>
 	</head>
 	<body>
 	<strong style="display:block; margin-bottom: 5px">Lanista Plus</strong>
 	<div id="root"></div>
-	<div class="hint">Hovra inställningarna för mer info</div>
+	<div class="hint desktop-only">Hovra inställningarna för mer info</div>
 	<script src="settings.js"></script>
 	</body>
 </html>
