@@ -365,6 +365,25 @@ interceptRequest(async (buf, details) => {
 }, 'build/assets/BattleInfo-*');
 
 
+/**
+ * # Beast.js
+ * - Bigger warning for outleveled beasts
+ */
+interceptRequest(async (buf, details) => {
+	if (SETTINGS.warnOutleveledBeasts.enabled) {
+		buf = buf.xReplace('[¤a("strong",[¤t._v("Vinst: ")]),¤t._v(" "+¤t._s(¤t.trans.get("ui.arena.no_rewards_from_beast"))+" ")]', `
+			[¤a("strong", [¤t._v("Vinst: ")]),
+			¤a("div", {
+				staticClass: "rounded border bg-orange-100 border-orange-400 text-orange-700 my-2 p-4 text-sm",
+			}, [¤t._v(¤t._s(¤t.trans.get("ui.arena.no_rewards_from_beast")))])
+			]
+		`);
+	}
+
+	return buf;
+}, 'build/assets/Beast-*');
+
+
 /* * * * * * * * *
  *               *
  * Helpers below *

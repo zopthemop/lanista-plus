@@ -9,6 +9,7 @@ const SETTINGS = {
 	mergeNotifications: { default: true, enabled: undefined, label: "Slå ihop turneringsnotiser", title: "När 13 turneringar släpps samtidigt får man 13 notiser - med denna får man istället en" },
 	renameTours: { default: true, enabled: undefined, label: "Lägg klockslag i tournamn i vänstermenyn", title: "Ersätter t.ex. Lunchbatalj IX med Lunchbatalj 13:10 i vänstermenyn" },
 	showAllGladiators: { default: true, enabled: undefined, label: "Visa alla gladiatorer i stallet", title: "Visar alla dina gladiatorer i stallet (i högermenyn) och markerar den som är aktiv, så att det är tydligare vilka du har och vilken du är inne på" },
+	warnOutleveledBeasts: { default: true, enabled: undefined, label: "Tydligare varning när man gradat ifrån odjur", title: "När man är för hög grad för att få sm eller EP från ett odjur, visa en tydligare varning" },
 };
 
 document.addEventListener("DOMContentLoaded", async () => {

@@ -13,6 +13,7 @@ I dagsläget finns följande inställningar:
 - Slå ihop turneringsnotiser
 - Lägg klockslag i tournamn i vänstermenyn
 - Visa alla gladiatorer i stallet
+- Tydligare varning när man gradat ifrån odjur
 
 Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höger i Firefox, sen på Lanista Plus. Allt går slå på/av individuellt (som standard är allting påslaget).
 
