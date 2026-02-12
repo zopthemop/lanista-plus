@@ -15,6 +15,7 @@ interceptRequest(async buf => {
 				const out = { ...a };
 				for (const [k, v] of Object.entries(b)) {
 					if (!(k in out)) {
+						console.warn("Something changed in lang, we found a new key", k);
 						out[k] = v;
 					} else if (isObj(out[k]) && isObj(v)) {
 						out[k] = deepMerge(out[k], v);
@@ -31,58 +32,57 @@ interceptRequest(async buf => {
 
 	if (SETTINGS.mergeNotifications.enabled) {
 		// When we receive several tournament notifications at once, merge them into one
-		buf = buf.replace(/onTournamentsPublished\(([^\)]*)\)\{/, `
+		buf = buf.xReplace('onTournamentsPublished(¤t){', `
 			$&
-			if ($1.length > 1) {
-				const tour = $1[0];
-				tour.name = tour.name.replace(/\\s[IVX]+(?:\\s|$)/, '') + ' (' + $1.length + ' st)';
+			if (¤t.length > 1) {
+				const tour = ¤t[0];
+				tour.name = tour.name.replace(/\\s[IVX]+(?:\\s|$)/, '') + ' (' + ¤t.length + ' st)';
 				tour.id = '';
-				$1 = [tour];
+				¤t = [tour];
 			}
 		`);
 	}
 
 	// Tournaments come over the websocket too, gotta rename them here
 	if (SETTINGS.renameTours.enabled) {
-		buf = buf.replace(/onRefreshAvatar\(([^\(\)]+)\)\{/, `
-			onRefreshAvatar($1){
+		buf = buf.xReplace('onRefreshAvatar(¤t){', `
+			onRefreshAvatar(¤t){
 				${renameTours.toString()};
-				renameTours($1.avatar.active_tournaments);
-			`);
+				renameTours(¤t.avatar.active_tournaments);
+		`);
 	}
 
 	if (SETTINGS.showAllGladiators.enabled) {
-		// TODO: these regexps are a real pain. is there a better way?
 		// Show all gladiators in the stable, and make the current one not clickable
-		buf = buf.replace(/([^,\(]+)\(([^\(\.]+).avatars.filter\(([^\(=]+)=>\3.id!==\2.avatar.id\),function\(\3\)\{return ([^\s\(]+)\("div",\{key:\3.id,staticClass:"flex items-center justify-between w-full pb-1 mb-1 border-b border-gray-500 cursor-pointer",on:\{click:function\(r\)\{return \2.changeAvatar\(\3\)\}\}\}/, `
-			$1($2.avatars, function($3) {
-				return $4("div", {
-					key: $3.id,
+		buf = buf.xReplace('¤e._l(e.avatars.filter(¤n=>¤n.id!==¤e.avatar.id),function(¤n){return ¤a("div",{key:¤n.id,staticClass:"flex items-center justify-between w-full pb-1 mb-1 border-b border-gray-500 cursor-pointer",on:{click:function(¤r){return ¤e.changeAvatar(¤n)}}}', `
+			¤e._l(¤e.avatars, function(¤n) {
+				return ¤a("div", {
+					key: ¤n.id,
 					staticClass: "flex items-center justify-between w-full pb-1 mb-1 border-b border-gray-500",
 					class: {
-						"cursor-pointer": !$3.active,
-						"font-bold": $3.active
+						"cursor-pointer": !¤n.active,
+						"font-bold": ¤n.active
 					},
 					on: {
 						click: function(r) {
-							if ($3.active) return;
-							return $2.changeAvatar($3)
+							if (¤n.active) return;
+							return ¤e.changeAvatar(¤n)
 						}
 					}
 				}
 		`);
 
 		// For the active gladiator, replace the KP with the text "Aktiv" at 50% transparency
-		buf = buf.replace(/\[([^\[\(]+)\("span",\[([^\[\(]+)\(([^\(]+)\(([^\(\.]+).current_hp\)\+"\/"\+\3\(\4.max_hp\)\)\]\)/, `
-			[$1("span", {class: {"opacity-50": $4.active}}, [$4.active ? $2('Aktiv') : $2($3($4.current_hp)+"/"+$3($4.max_hp))])
+		buf = buf.xReplace('[¤a("span",[¤e._v(¤e._s(¤n.current_hp)+"/"+¤e._s(¤n.max_hp))])', `
+			[¤a("span", {class: {"opacity-50": ¤n.active}}, [¤n.active ? ¤e._v('Aktiv') : ¤e._v(¤e._s(¤n.current_hp) + "/" + ¤e._s(¤n.max_hp))])
 		`);
 
 		// For the active gladiator, make the name 50% transparent
-		buf = buf.replace(/\[([^\[\(]+)\("span",\{staticClass:"block w-16 h-4 overflow-hidden text-xs font-light font-serif overflow-ellipsis"\},\[([^\[\(]+)\(" "\+([^\+\(]+)\(([^\(\.]+).name\)\+" "\)\]\)/, `
-			[$1("span", {
+		buf = buf.xReplace('[¤a("span",{staticClass:"block w-16 h-4 overflow-hidden text-xs font-light font-serif overflow-ellipsis"},[¤e._v(" "+¤e._s(¤n.name)+" ")])', `
+			[¤a("span", {
                 staticClass: "block w-16 h-4 overflow-hidden text-xs font-light font-serif overflow-ellipsis",
-				class: {"opacity-50": $4.active}
-            }, [$2(" " + $3($4.name) + " ")])
+				class: {"opacity-50": ¤n.active}
+            }, [¤e._v(" " + ¤e._s(¤n.name) + " ")])
 		`);
 	}
 
@@ -251,6 +251,12 @@ interceptRequest(async (buf, details) => {
 			renameTours(result.avatar.active_tournaments);
 		}
 
+		// Order of avatars.gladiators is weird, always sort by id for now.
+		// Best would be to remember which is primary/secondary/tertiary
+		if (SETTINGS.showAllGladiators.enabled) {
+			result.avatars.sort((a, b) => a.id - b.id);
+		}
+
 		buf = JSON.stringify(result);
 	} catch (e) {
 		console.error("Error in users/me API call!", e, JSON.stringify(buf));
@@ -258,6 +264,26 @@ interceptRequest(async (buf, details) => {
 
 	return buf;
 }, 'api/users/me');
+
+/**
+ * # avatars/me API call (some sort of refresh call I think?)
+ * - rename tours (remove numerals, add clock)
+ */
+interceptRequest(async (buf, details) => {
+	try {
+		const result = JSON.parse(buf);
+
+		if (SETTINGS.renameTours.enabled) {
+			renameTours(result.active_tournaments);
+		}
+
+		buf = JSON.stringify(result);
+	} catch (e) {
+		console.error("Error in avatars/me API call!", e, JSON.stringify(buf));
+	}
+
+	return buf;
+}, 'api/avatars/me');
 
 /**
  * # users/me/favoritelinks API call (happens when they change)
@@ -305,34 +331,33 @@ interceptRequest(async (buf, details) => {
 		`);
 
 		// Add some eye popping "you've won/lost/got loot" alerts
-		// TODO: actually, the ._v and ._e below could change on transpiling...
-		//       figure that out if it becomes a problem
-		buf = buf.replace(/\[([^=\[]+)===0&&([^&\.]+)\.battle\.live/, `
-			[!$2.battle.live && $1 === 0 && $2.iWon ? e("div", {
+		// TODO: We're not finding e below, could break if it changes name
+		buf = buf.xReplace('[¤a===0&&¤t.battle.live', `
+			[!¤t.battle.live && ¤a === 0 && ¤t.iWon ? e("div", {
 				staticClass: "rounded border bg-green-100 border-green-400 text-green-700 my-2 p-4 text-sm"
 			}, [
-				$2._v("Din gladiator vann! Grattis!"),
-				$2.iGotLoot ? e("strong", { staticClass: 'block mt-4 text-lg' }, [$2._v("Du fick även loot!")]) : $2._e()
-			]) : $2._e(),
-			!$2.battle.live && $1 === 0 && $2.iLost ? e("div", {
+				¤t._v("Din gladiator vann! Grattis!"),
+				¤t.iGotLoot ? e("strong", { staticClass: 'block mt-4 text-lg' }, [¤t._v("Du fick även loot!")]) : ¤t._e()
+			]) : ¤t._e(),
+			!¤t.battle.live && ¤a === 0 && ¤t.iLost ? e("div", {
 				staticClass: "rounded border bg-orange-100 border-orange-400 text-orange-700 my-2 p-4 text-sm"
 			}, [
-				$2._v("Din gladiator förlorade :(")
-			]) : $2._e(),
-			$1===0&&$2.battle.live
+				¤t._v("Din gladiator förlorade :(")
+			]) : ¤t._e(),
+			¤a===0&&¤t.battle.live
 		`);
 	}
 
 
 	if (SETTINGS.lastRoundFirst.enabled) {
 		// This bit makes the first round label "Lag x går segrande ur striden!" (except for live fights)
-		buf = buf.replace(/:([^:\+]+)\+1!==([^=\.]+)\.rounds\.length\|\|!\2\.battle\.finished&&!\2\.isLegacy/, `
-			:($2.battle.live ? ($1+1!==$2.rounds.length||!$2.battle.finished&&!$2.isLegacy) : ($1>0||!$2.battle.finished&&!$2.isLegacy))
+		buf = buf.xReplace(':¤a+1!==¤t.rounds.length||!¤t.battle.finished&&!¤t.isLegacy', `
+			:(¤t.battle.live ? (¤a+1!==¤t.rounds.length||!¤t.battle.finished&&!¤t.isLegacy) : (¤a>0||!¤t.battle.finished&&!$2.isLegacy))
 		`);
 
 		// This bit ensures ensures following rounds have the right label
-		buf = buf.replace(/displayIndex\(([^\(\)]+)\){return this\.battle\.live\?\1:\1\+1/, `
-			displayIndex($1) { return $1
+		buf = buf.xReplace('displayIndex(¤n){return this.battle.live?¤n:¤n+1', `
+			displayIndex(¤n) { return ¤n
 		`);
 	}
 
@@ -458,3 +483,48 @@ function renameTours(tours) {
 		tour.name = tour.name.replace(/\s[IVX]+(?:\s|$)/, '') + ' ' + time;
 	});
 }
+
+/*
+ * OK, this is a somewhat odd helper. It's to make the job of writing the
+ * .js file regexps less cumbersome. What it does is basically help us with:
+ * 1. escaping all special chars from the search string, and
+ * 2. help us easily replace identifiers (they can change due to minification)
+ * We define it as a method on String for simplicity
+ */
+String.prototype.xReplace = function(searchStr, replaceStr) {
+	let regexStr = '';
+
+	// Escape all the special characters in the searchStr
+	const escapees = ['-', '.', '\\', '^', '$', '|', '?', '*', '+', '(',
+		')', '[', ']', '{', '}'];
+	for (const ch of searchStr) {
+		if (escapees.includes(ch)) {
+			regexStr += '\\';
+		}
+		regexStr += ch;
+	}
+
+	// Replace our placeholders
+	const seen = new Map();
+	// NOTE: This is NOT exhaustive... js identifier rules are crazy. But I
+	//       think this is good enough to catch whatever the minifier will 
+	//       throw out as an identifier
+	const ident = '[A-Za-z_$][A-Za-z_$0-9]*';
+	regexStr = regexStr.replace(new RegExp(`¤(${ident})`, 'g'), (_, name) => {
+		if (!seen.has(name)) {
+			seen.set(name, true);
+
+			return `(?<${name}>${ident})`;
+		}
+
+		return `\\k<${name}>`;
+	});
+
+	// and finally we replace the placeholders in the replaceStr
+	replaceStr = replaceStr.replace(new RegExp(`¤(${ident})`, 'g'), (_, name) => {
+		return `$<${name}>`;
+	});
+
+	// now, replace and return!
+	return this.replace(new RegExp(regexStr), replaceStr);
+};
