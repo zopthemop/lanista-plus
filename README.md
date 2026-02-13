@@ -14,6 +14,8 @@ I dagsläget finns följande inställningar:
 - Lägg klockslag i tournamn i vänstermenyn
 - Visa alla gladiatorer i stallet
 - Tydligare varning när man gradat ifrån odjur
+- Visa KP efter nästa ladd
+- Visa 90% på KP-mätaren
 
 Du kommer åt inställningarna genom att klicka på pusselikonen uppe till höger i Firefox, sen på Lanista Plus. Allt går slå på/av individuellt (som standard är allting påslaget).
 
@@ -28,6 +30,8 @@ Sorry för det, informationen är sammanställd av mig från [mitt stora Googled
 
 ### Några enkla bildjämförelser nedan
 
+Notera att jag använder [Dark Reader](https://addons.mozilla.org/en-US/firefox/addon/darkreader/), ett (separat) utmärkt Firefox extension för att ge Lanista ett mörkt tema (det som syns på bilderna nedan).
+
 Standard Lanista             |  Lanista Plus med "Förenklat matchspråk"
 :-------------------------:|:-------------------------:
 ![](images/originallanguage.png)  |  ![](images/moddedlanguage.png)
@@ -35,3 +39,13 @@ Standard Lanista             |  Lanista Plus med "Visa detaljerad info om odjur"
 ![](images/originalnpc.png)  |  ![](images/moddednpc.png)
 Standard Lanista             |  Lanista Plus med "Slå ihop turneringsnotiser"
 ![](images/originalnotifications.png)  |  ![](images/moddednotifications.png)
+features
+
+#### Några fler bilder
+
+Inställning            | Bild
+:-------------------------:|:-------------------------:
+ Tydligare varning när man gradat ifrån odjur |  ![](images/moddedbeastwarning.png)
+ Visa KP efter nästa ladd<br>samt visa 90% på KP-mätaren | ![](images/moddedkpbar.png)
+ Visa alla gladiatorer i stallet | ![](images/moddedstable.png)
+ Visa extra tydligt matchresultat | ![](images/moddedresults.png) <br> ![](images/moddedresults2.png)
