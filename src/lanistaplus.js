@@ -86,6 +86,43 @@ interceptRequest(async buf => {
 		`);
 	}
 
+	// Show another bar for next loads worth of hp
+	if (SETTINGS.showNextLoadKP.enabled) {
+		buf = buf.xReplace('¤e._e()]),¤a("div",{staticClass:"bg-red-900 absolute left-0 z-[0] h-full transition-[width] duration-500 ease-in rounded",style:`width:${¤e.percentageHp}%`})', `
+			¤e._e()]), ¤a("div", {
+				staticClass: "bg-red-900 absolute left-0 z-[0] h-full transition-[width] duration-500 ease-in rounded-l",
+				class: { 'rounded-r': ¤e.percentageHp > 99 },
+				style: 'width:'+¤e.percentageHp+'%'
+			}), ¤a("div", {
+				staticClass: "bg-red-900 absolute z-[0] h-full ease-in rounded-r",
+				class: { 'hidden': ¤e.percentageHp === 100 },
+				style: 'left:'+¤e.percentageHp+'%; width:'+Math.min(34, (100-¤e.percentageHp))+'%; opacity: 0.45;'
+					// try to get the transitions to mesh with the HP bar transition
+					+ ' transition-property: width, left;'
+					+ (Math.min(34, (100-¤e.percentageHp)) < 34 ? ''
+						+ ' transition-delay: 0s, 0;'
+						+ ' transition-duration: 0.05s, 0.5s;'
+					: ''
+						+ ' transition-delay: 0.5s, 0;'
+						+ ' transition-duration: 0.5s, 0.5s;')
+			})
+		`);
+	}
+
+	// Show where 90% is on the KP meter
+	if (SETTINGS.show90PercentKP.enabled) {
+		buf = buf.xReplace('])]),¤e.hide_info?¤e._e():¤a("div",{staticClass:"my-2 block",attrs:{"data-intro":¤e.trans.get("ui.intro.stats_xp")', `
+			,¤a("div", {
+				staticClass: "absolute z-[0]",
+				style: "height: calc(100% + 6px); border-left: 1px dotted white !important; left: 90%",
+			})
+			])]), ¤e.hide_info ? ¤e._e() : ¤a("div", {
+            staticClass: "my-2 block",
+            attrs: {
+                "data-intro": ¤e.trans.get("ui.intro.stats_xp")
+		`);
+	}
+
 	return buf;
 }, "build/assets/main*.js");
 
@@ -240,6 +277,11 @@ interceptRequest(async (buf, details) => {
  * - rename tours (remove numerals, add clock)
  */
 interceptRequest(async (buf, details) => {
+	// Dunno which request causes it, but sometimes buf is empty here
+	if (!buf.length) { 
+		return buf;
+	}
+
 	try {
 		const result = JSON.parse(buf);
 
