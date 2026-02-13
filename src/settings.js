@@ -10,6 +10,8 @@ const SETTINGS = {
 	renameTours: { default: true, enabled: undefined, label: "Lägg klockslag i tournamn i vänstermenyn", title: "Ersätter t.ex. Lunchbatalj IX med Lunchbatalj 13:10 i vänstermenyn" },
 	showAllGladiators: { default: true, enabled: undefined, label: "Visa alla gladiatorer i stallet", title: "Visar alla dina gladiatorer i stallet (i högermenyn) och markerar den som är aktiv, så att det är tydligare vilka du har och vilken du är inne på" },
 	warnOutleveledBeasts: { default: true, enabled: undefined, label: "Tydligare varning när man gradat ifrån odjur", title: "När man är för hög grad för att få sm eller EP från ett odjur, visa en tydligare varning" },
+	showNextLoadKP: { default: true, enabled: undefined, label: "Visa KP efter nästa ladd", title: "Visar på KP-mätaren hur mycket KP du kommer ha efter nästa ladd" },
+	show90PercentKP: { default: true, enabled: undefined, label: "Visa 90% på KP-mätaren", title: "Ritar ett streck på KP-mätaren som markerar vad som är 90%" },
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
