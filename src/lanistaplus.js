@@ -2,9 +2,19 @@
 
 /**
  * # Main.js
- * - Simplify battle language
+ * - Lots of different features :)
  */
 interceptRequest(async buf => {
+	if (SETTINGS.fewerLTSpoilers.enabled) {
+		buf += `;window.skipLT = function(battle) {
+			return battle?.tournament?.name === 'Legendturnering';
+		};`;
+	} else {
+		buf += `;window.skipLT = function(battle) {
+			return false;
+		};`;
+	}
+
 	if (SETTINGS.moddedLanguage.enabled) {
 		// Replace the battle translation texts
 		const langKeyTerm = 'sv.battle":';
@@ -191,7 +201,7 @@ interceptRequest(async buf => {
 		}
 		
 		// NOTE: Don't move around rounds on live fights, breaks stuff
-		if (SETTINGS.lastRoundFirst.enabled && !battle.live) {
+		if (SETTINGS.lastRoundFirst.enabled && !battle.live && !skipLT(battle)) {
 			// Move the last round first
 			battle.rounds.unshift(battle.rounds.pop());
 			// ... and reset the order (doesn't seem to matter, but eh)
@@ -375,13 +385,13 @@ interceptRequest(async (buf, details) => {
 		// Add some eye popping "you've won/lost/got loot" alerts
 		// TODO: We're not finding e below, could break if it changes name
 		buf = buf.xReplace('[¤a===0&&¤t.battle.live', `
-			[!¤t.battle.live && ¤a === 0 && ¤t.iWon ? e("div", {
+			[!¤t.battle.live && !window.skipLT?.call(null, ¤t.battle) && ¤a === 0 && ¤t.iWon ? e("div", {
 				staticClass: "rounded border bg-green-100 border-green-400 text-green-700 my-2 p-4 text-sm"
 			}, [
 				¤t._v("Din gladiator vann! Grattis!"),
 				¤t.iGotLoot ? e("strong", { staticClass: 'block mt-4 text-lg' }, [¤t._v("Du fick även loot!")]) : ¤t._e()
 			]) : ¤t._e(),
-			!¤t.battle.live && ¤a === 0 && ¤t.iLost ? e("div", {
+			!¤t.battle.live && !window.skipLT?.call(null, ¤t.battle) && ¤a === 0 && ¤t.iLost ? e("div", {
 				staticClass: "rounded border bg-orange-100 border-orange-400 text-orange-700 my-2 p-4 text-sm"
 			}, [
 				¤t._v("Din gladiator förlorade :(")
@@ -394,12 +404,15 @@ interceptRequest(async (buf, details) => {
 	if (SETTINGS.lastRoundFirst.enabled) {
 		// This bit makes the first round label "Lag x går segrande ur striden!" (except for live fights)
 		buf = buf.xReplace(':¤a+1!==¤t.rounds.length||!¤t.battle.finished&&!¤t.isLegacy', `
-			:(¤t.battle.live ? (¤a+1!==¤t.rounds.length||!¤t.battle.finished&&!¤t.isLegacy) : (¤a>0||!¤t.battle.finished&&!$2.isLegacy))
+			:((¤t.battle.live || window.skipLT?.call(null, ¤t.battle)) ? (¤a+1!==¤t.rounds.length||!¤t.battle.finished&&!¤t.isLegacy) : (¤a>0||!¤t.battle.finished&&!$2.isLegacy))
 		`);
 
 		// This bit ensures ensures following rounds have the right label
+		// NOTE: The reason we don't just skipLT(this.battle) is that skipLT
+		//       might not be defined when the extension updates (e.g. when 
+		//       the extension updates)
 		buf = buf.xReplace('displayIndex(¤n){return this.battle.live?¤n:¤n+1', `
-			displayIndex(¤n) { return ¤n
+			displayIndex(¤n) { return window.skipLT?.call(null, this.battle) ? ¤n+1 : ¤n
 		`);
 	}
 
@@ -545,7 +558,7 @@ function renameTours(tours) {
 	});
 }
 
-/*
+/**
  * OK, this is a somewhat odd helper. It's to make the job of writing the
  * .js file regexps less cumbersome. What it does is basically help us with:
  * 1. escaping all special chars from the search string, and
@@ -589,3 +602,11 @@ String.prototype.xReplace = function(searchStr, replaceStr) {
 	// now, replace and return!
 	return this.replace(new RegExp(regexStr), replaceStr);
 };
+
+/**
+ * Tiny helper for the fewerLTSpoilers setting (there's another version of
+ * this injected into main.js)
+ */
+function skipLT(match) {
+	return SETTINGS.fewerLTSpoilers.enabled && match?.tournament?.name === 'Legendturnering';
+}
