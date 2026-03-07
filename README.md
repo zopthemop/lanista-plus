@@ -1,3 +1,5 @@
+**OBS! Lanista gjorde en liten redesign nyligen som troligtvis har gjort att inte alla inställningar fungerar. Vet inte ifall jag har tid och lust att spela denna säsong, så vi ser väl ifall jag fixar tillägget eller ej. Ifall du märker något som inte funkar kan du med fördel öppna en [issue](https://github.com/zopthemop/lanista-plus/issues) om det så är felet iaf dokumenterat.**
+
 # Lanista Plus
 
 En Firefox extension som tweakar det härliga svenska webbspelet [Lanista](https://beta.lanista.se).
